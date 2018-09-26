@@ -2,38 +2,57 @@
 
 const fs = require('fs');
 const path = require('path');
-const mkdirPath = './templates';
+const BASE_PATH = './templates';
 
 function copyTemplate ( from , to ) {
-  from = path.join(__dirname, 'templates', from);
+  from = path.join(__dirname, from);
   write(to, fs.readFileSync(from, 'utf-8'));
 }
 
 function copyCatalog (mkdirPath) {
-  fs.readdir(mkdirPath, (err, files) => {
+  from = path.join(__dirname, mkdirPath);
+
+  fs.readdir(from, (err, files) => {
     if (err) {
-      console.log(`readdir ${mkdirPath} file failed ~`);
+      console.log(`readdirSync ${from} file failed ~`);
       return false;
     }
 
-
-    mkdir(`${mkdirPath}`, () => {
+    if (BASE_PATH === mkdirPath) {
       files.forEach(item => {
-        fs.stat(`${mkdirPath}/${item}`, function(err,stat){
+        fs.stat(`${from}/${item}`, function(err,stat) {
           if (err) {
             console.error(err);
             throw err;
           }
   
           if (stat.isFile()) {
-            copyTemplate(`${mkdirPath}/${item}`, `${mkdirPath}/${item}`);
+            copyTemplate(`${mkdirPath}/${item}`, item);
           } else if (stat.isDirectory()) {
-            copyCatalog(`${mkdirPath}/${item}`, `${mkdirPath}/${item}`);
+            copyCatalog(`${mkdirPath}/${item}`, item);
           }
         });
       });
-    });
-
+    } else {
+      const path = mkdirPath.split(BASE_PATH)[1];
+      
+      mkdir(`.${path}`, () => {
+        files.forEach(item => {
+          fs.stat(`${from}/${item}`, function(err,stat) {
+            if (err) {
+              console.error(err);
+              throw err;
+            }
+    
+            if (stat.isFile()) {
+              copyTemplate(`${mkdirPath}/${item}`, `.${path}/${item}`);
+            } else if (stat.isDirectory()) {
+              copyCatalog(`${mkdirPath}/${item}`, `.${path}/${item}`);
+            }
+          });
+        });
+      });
+    }
   });
 }
 
@@ -47,4 +66,4 @@ function mkdir ( path, fn ) {
   });
 }
 
-copyCatalog(mkdirPath);
+copyCatalog(BASE_PATH);
