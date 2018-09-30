@@ -13,5 +13,8 @@
     "cli"
   ],
   "author": "zhaoyingyz@126.com",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.18.0"
+  }
 }
