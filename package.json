@@ -4,7 +4,8 @@
   "description": "前端自动化构建工具",
   "main": "index.js",
   "bin": {
-    "bestinc-cli": "./index.js"
+    "bestinc-cli": "./index.js",
+    "test": "./app.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,6 +16,9 @@
   "author": "zhaoyingyz@126.com",
   "license": "MIT",
   "dependencies": {
-    "commander": "^2.18.0"
+    "colors": "^1.3.2",
+    "commander": "^2.18.0",
+    "csv": "^4.0.0",
+    "inquirer": "^6.2.0"
   }
 }

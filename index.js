@@ -1,86 +1,66 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 const package = require(path.resolve(__dirname, './package.json'));
-const BASE_PATH = './templates';
-
-function copyTemplate ( from , to ) {
-  from = path.join(__dirname, from);
-  write(to, fs.readFileSync(from, 'utf-8'));
-}
-
-function copyCatalog (mkdirPath, projectName) {
-  from = path.join(__dirname, mkdirPath);
-
-  fs.readdir(from, (err, files) => {
-    if (err) {
-      console.log(`   readdirSync ${from} file failed ~`);
-      return false;
-    }
-
-    if (BASE_PATH === mkdirPath) {
-      files.forEach(item => {
-        fs.stat(`${from}/${item}`, function(err,stat) {
-          if (err) {
-            console.error(err);
-            throw err;
-          }
-  
-          if (stat.isFile()) {
-            console.log(`   copy ${mkdirPath}/${item} to ./${projectName}/${item}`);
-            copyTemplate(`${mkdirPath}/${item}`, `./${projectName}/${item}`);
-          } else if (stat.isDirectory()) {
-            copyCatalog(`${mkdirPath}/${item}`, projectName);
-          }
-        });
-      });
-    } else {
-      const path = mkdirPath.split(BASE_PATH)[1];
-
-      mkdir(`./${projectName}${path}`, () => {
-        files.forEach(item => {
-          fs.stat(`${from}/${item}`, function(err,stat) {
-            if (err) {
-              console.error(err);
-              throw err;
-            }
-    
-            if (stat.isFile()) {
-              copyTemplate(`${mkdirPath}/${item}`, `./${projectName}${path}/${item}`);
-              console.log(`   copy ${mkdirPath}/${item} to ./${projectName}${path}/${item}`);
-            } else if (stat.isDirectory()) {
-              copyCatalog(`${mkdirPath}/${item}`, projectName);
-            }
-          });
-        });
-      });
-    }
-  });
-}
-
-function write ( path, str, mode ) {
-  fs.writeFileSync(path, str);
-}
-
-function mkdir ( path, fn ) {
-  fs.mkdir(path, function (err) {
-    fn & fn();
-  });
-}
+const colors = require('colors/safe');
+const readline = require('readline');
+const { BASE_PATH, copyCatalog, mkdir } = require('./libs/file');
 
 function printHelp () {
-  console.log(' Examples');
   console.log(' ');
-  console.log('   交互创建项目');
-  console.log('   bestinc-cli');
+  console.log('   Examples');
   console.log(' ');
+  console.log('     创建项目');
+  console.log(' ');
+  console.log('     bestinc-cli -C projectName');
+  console.log(' ');
+}
+
+function initFunc () {
+  process.stdout.write('初始化 bestinc-cli，生成项目？(y/n)   ');
+  process.stdin.resume();
+  process.stdin.setEncoding('utf-8');
+  process.stdin.on('data', (chunk) => {
+    chunk = chunk.replace(/[\s\n]/, '');
+
+    if (chunk !== 'y' && chunk !== 'Y' && chunk !== 'n' && chunk !== 'N') {
+      console.log(colors.red('您输入的命令是： ' + chunk));
+      console.warn(colors.red('请输入正确指令：y/n'));
+      process.exit();
+    }
+
+    process.stdin.pause();
+  });
+}
+
+function init () {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    ouput: process.stdout,
+    prompt: '请输入> '
+  });
+
+  rl.write('请输入项目名称：  ');
+  // rl.prompt();
+  // rl.pause();
+  // rl.resume();
+  // rl.setPrompt('请输入项目名称：  ');
+
+  // rl.question('请输入项目名称： ', function (answer) {
+  //   console.log(answer);
+  //   rl.close();
+  // });
+
+  // rl.on('line', function (line) {
+  //   console.log(line)
+  // });
 }
 
 program.version(package.version)
   .usage('[options]')
-  .option('-C, --create <project-name>', '指定项目名称');
+  .option('<projectName>', '指定项目名称')
+  .option('-C, --create <projectName>', '指定项目名称');
 
 program.on('--help', printHelp);
 program.parse(process.argv);
@@ -91,7 +71,6 @@ if (program.create) {
   console.log(' ');
   console.log('     creating %s', program.create);
   console.log(' ');
-  mkdir(`./${program.create}`, () => {
-    copyCatalog(BASE_PATH, program.create);
-  });
+  
+  init();
 }
