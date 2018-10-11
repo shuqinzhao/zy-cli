@@ -4,7 +4,7 @@ const path = require('path');
 const program = require('commander');
 const package = require(path.resolve(__dirname, './package.json'));
 
-const { BASE_PATH, copyCatalog, mkdir } = require('./libs/file');
+const { BASE_PATH, copyCatalog, mkdir } = require('./libs/utils/file');
 
 function printHelp () {
   console.log(' Examples');

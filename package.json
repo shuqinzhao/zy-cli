@@ -5,7 +5,9 @@
   "main": "index.js",
   "bin": {
     "bestinc-cli": "./index.js",
-    "test": "./app.js"
+    "cli": "./app.js",
+    "cli-init": "./libs/init.js",
+    "cli-list": "./libs/list.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +21,11 @@
     "colors": "^1.3.2",
     "commander": "^2.18.0",
     "csv": "^4.0.0",
-    "inquirer": "^6.2.0"
+    "inquirer": "^6.2.0",
+    "request": "^2.88.0",
+    "semver": "^5.5.1"
+  },
+  "engines": {
+    "node": ">=8.4"
   }
 }
