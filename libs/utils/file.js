@@ -1,9 +1,16 @@
 const fs = require('fs');
 const path = require('path');
-const BASE_PATH = '../templates';
+const colors = require('colors');
+const { templateList } = require('../../config');
+const BASE_PATH = '../../templates';
 
 function write ( path, str, mode ) {
   fs.writeFileSync(path, str);
+}
+function mkdir ( path, fn ) {
+  fs.mkdir(path, function (err) {
+    fn & fn();
+  });
 }
 function copyTemplate ( from , to ) {
   from = path.join(__dirname, from);
@@ -11,44 +18,45 @@ function copyTemplate ( from , to ) {
 }
 
 function copyCatalog (mkdirPath, projectName) {
-  from = path.join(__dirname, mkdirPath);
+  const from = path.join(__dirname, `${BASE_PATH}/${mkdirPath}`);
 
   fs.readdir(from, (err, files) => {
     if (err) {
-      console.log(`   readdirSync ${from} file failed ~`);
+      console.error(colors.red(`   readdirSync ${from} file failed ~`));
       return false;
     }
 
-    if (BASE_PATH === mkdirPath) {
+    const isRoot = !!templateList.find(item => item.name === mkdirPath);
+    if (isRoot) {
       files.forEach(item => {
-        fs.stat(`${from}/${item}`, function(err,stat) {
+        fs.stat(`${from}/${item}`, function (err, stat) {
           if (err) {
             console.error(err);
             throw err;
           }
-  
+
           if (stat.isFile()) {
-            console.log(`   copy ${mkdirPath}/${item} to ./${projectName}/${item}`);
-            copyTemplate(`${mkdirPath}/${item}`, `./${projectName}/${item}`);
+            copyTemplate(`${BASE_PATH}/${mkdirPath}/${item}`, `${projectName ? projectName + '/' : ''}${item}`);
           } else if (stat.isDirectory()) {
             copyCatalog(`${mkdirPath}/${item}`, projectName);
           }
         });
       });
     } else {
-      const path = mkdirPath.split(BASE_PATH)[1];
+      const splitPath = mkdirPath.split('/');
+      splitPath.shift();
+      const basePath = `${projectName ? projectName + '/' : ''}${splitPath.join('/')}`;
 
-      mkdir(`./${projectName}${path}`, () => {
+      mkdir(basePath, () => {
         files.forEach(item => {
-          fs.stat(`${from}/${item}`, function(err,stat) {
+          fs.stat(`${from}/${item}`, function (err, stat) {
             if (err) {
               console.error(err);
               throw err;
             }
-    
+  
             if (stat.isFile()) {
-              copyTemplate(`${mkdirPath}/${item}`, `./${projectName}${path}/${item}`);
-              console.log(`   copy ${mkdirPath}/${item} to ./${projectName}${path}/${item}`);
+              copyTemplate(`${BASE_PATH}/${mkdirPath}/${item}`, `./${basePath}/${item}`);
             } else if (stat.isDirectory()) {
               copyCatalog(`${mkdirPath}/${item}`, projectName);
             }
@@ -56,11 +64,6 @@ function copyCatalog (mkdirPath, projectName) {
         });
       });
     }
-  });
-}
-function mkdir ( path, fn ) {
-  fs.mkdir(path, function (err) {
-    fn & fn();
   });
 }
 

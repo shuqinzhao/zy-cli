@@ -3,91 +3,67 @@
 const inquirer = require('inquirer');
 const program = require('commander');
 const user = require('./utils/user');
+const fs = require('fs');
 const chooseTemplate = require('./utils/chooseTemplate');
 const { downloadFile } = require('./utils/download');
+const { simplePrompt, webpackSimpleTemplate } = require('../config');
 let config = {};
+
+function getCatalogs () {
+  const rootPath = process.cwd();
+  let catalogs = [];
+  const files = fs.readdirSync(process.cwd());
+
+  files.forEach(item => {
+    fs.stat(`${rootPath}/${item}`, function (err, stat) {
+      if (err) {
+        console.error(err);
+        throw err;
+      }
+  
+      if (!stat.isFile()) {
+        catalogs.push(item);
+      }
+    })
+  });
+
+  return catalogs;
+}
+const catalogs = getCatalogs();
+
 
 program.parse(process.argv);
 const userInfo = user();
 
 /**
- * cli init
+ * 获取用户自定义配置信息
+ * 询问式命令行
  */
-async function init () {
-  /**
-   * 获取用户自定义配置信息
-   * 询问式命令行
-   */
-  await inquirer.prompt([
-    {
-      type:'input',
-      message: '请输入作者：',
-      name: 'name',
-      validate: function (input) {
-        const done = this.async();
+async function prompt (promptList) {
+  let configList;
 
-        if (!input) {
-          done('请输入作者');
-          return;
-        }
-
-        done(null, true);
-      },
-      default: userInfo
-    },
-    {
-      type:'input',
-      message: '请输入项目名称：',
-      name: 'name',
-      validate: function (input) {
-        const done = this.async();
-
-        if (!input) {
-          done('请输入项目名称');
-          return;
-        }
-
-        done(null, true);
-      },
-      default: program.args[0]
-    },
-    {
-      type:'confirm',
-      message: '请问是否使用 React-router ?',
-      name: 'isRouter'
-    },
-    {
-      type:'confirm',
-      message: '请问是否使用 Redux ?',
-      name: 'isRedux'
-    },
-    {
-      type:'list',
-      message: '请问是 单页面应用 ？还是 多页面应用 ？',
-      choices: ['单页面应用', '多页面应用'],
-      name: 'isSinglePage'
-    },
-    {
-      type:'confirm',
-      message: '请问是否使用 CSS 预编译 ？',
-      name: 'isPrecompiled'
-    },
-    {
-      type:'confirm',
-      message: '请问是否使用 ESlint 标准化语法 ？',
-      name: 'isESlint'
-    },
-    {
-      type:'confirm',
-      message: '请问是否使用 前端自动化测试 (Karma) ？',
-      name: 'isTest'
-    },
-  ]).then(answers => {
-    config = Object.assign({}, answers);
+  await inquirer.prompt(promptList).then(answers => {
+    configList = Object.assign({}, answers);
   });
 
-  const projectType = chooseTemplate(config);
-  // downloadFile(projectType);
+  return configList;
+}
+
+/**
+ * 根据模板名选择 promptList
+ */
+async function init () {
+  switch (program.args[0]) {
+    case 'simple':
+      config = await prompt(simplePrompt(userInfo, catalogs));
+      break;
+    case 'webpack-simple':
+      config = await prompt(webpackSimpleTemplate(userInfo, catalogs));
+      break;
+  }
+  config.type = program.args[0];
+
+  chooseTemplate(config);
 }
 
 init();
