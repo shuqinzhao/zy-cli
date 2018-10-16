@@ -52,22 +52,29 @@ async function prompt (promptList) {
  * 根据模板名选择 promptList
  */
 async function init () {
-  switch (program.args[0]) {
-    case 'simple':
-      config = await prompt(simplePrompt(userInfo, catalogs));
-      break;
-    case 'webpack-simple':
-      config = await prompt(webpackSimplePrompt(userInfo, catalogs));
-      break;
-    default:
-      console.log(colors.red(`不存在该模板！
-      `));
-      console.log(colors.green(`请重新选择
-      `));
-  }
-  config.type = program.args[0];
+  if (program.args.length) {
+    switch (program.args[0]) {
+      case 'simple':
+        config = await prompt(simplePrompt(userInfo, catalogs));
+        break;
+      case 'webpack-simple':
+        config = await prompt(webpackSimplePrompt(userInfo, catalogs));
+        break;
+      default:
+        console.log(colors.red(`不存在该模板！
+        `));
+        console.log(colors.green(`请重新选择
+        `));
+        break;
+    }
+    config.type = program.args[0];
 
-  chooseTemplate(config);
+    chooseTemplate(config);
+  } else {
+    console.log('');
+    console.log(colors.red('请选择所需模板!'));
+    console.log('');
+  }
 }
 
 init();
