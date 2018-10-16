@@ -109,7 +109,7 @@ function webpackSimplePrompt (userInfo, catalogs) {
       type: 'list',
       message: '请选择：',
       name: 'stateType',
-      choices: ['Redux', 'Reflux'],
+      choices: ['Redux', 'Reflux', 'Mobx'],
       when: function (answers) {
         return answers.isState
       },
@@ -132,6 +132,23 @@ function webpackSimplePrompt (userInfo, catalogs) {
       },
       filter: function (val) {
         return val === '单页面应用'
+      }
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 CSS 预编译工具 ？',
+      name: 'isPrecompiled'
+    },
+    {
+      type: 'list',
+      message: '请选择 CSS 预编译工具：',
+      name: 'precompiledTool',
+      choices: ['Sass', 'Less'],
+      when: function (answers) {
+        return answers.isPrecompiled;
+      },
+      filter: function (val) {
+        return val.toLowerCase();
       }
     },
     {
