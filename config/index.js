@@ -95,7 +95,10 @@ function webpackSimplePrompt (userInfo, catalogs) {
       type: 'input',
       message: '作者：',
       name: 'auth',
-      default: userInfo
+      default: userInfo,
+      when: function (answers) {
+        return (typeof answers.isCover === 'undefined' || answers.isCover)
+      }
     }
   ];
 }

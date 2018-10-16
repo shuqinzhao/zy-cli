@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { createSimpleProject } = require('./create');
+const { createSimpleProject, createWebpackSimpleProject } = require('./create');
 
 /**
  * 根据配置信息获取对应模板
@@ -12,7 +12,7 @@ function chooseTemplate (config) {
       createSimpleProject(config);
       break;
     case 'webpack-simple':
-      console.log(config);
+      createWebpackSimpleProject(config);
       break;
   }
 }

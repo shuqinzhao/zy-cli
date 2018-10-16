@@ -4,8 +4,7 @@
   "description": "前端自动化构建工具",
   "main": "index.js",
   "bin": {
-    "bestinc-cli": "./index.js",
-    "cli": "./app.js",
+    "cli": "./index.js",
     "cli-init": "./libs/init.js",
     "cli-list": "./libs/list.js"
   },
