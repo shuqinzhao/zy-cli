@@ -12,7 +12,8 @@ function chooseTemplate (config) {
       createSimpleProject(config);
       break;
     case 'webpack-simple':
-      createWebpackSimpleProject(config);
+      console.log(config)
+      // createWebpackSimpleProject(config);
       break;
   }
 }

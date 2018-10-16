@@ -99,6 +99,70 @@ function webpackSimplePrompt (userInfo, catalogs) {
       when: function (answers) {
         return (typeof answers.isCover === 'undefined' || answers.isCover)
       }
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 状态管理 ？',
+      name: 'isState',
+    },
+    {
+      type: 'list',
+      message: '请选择：',
+      name: 'stateType',
+      choices: ['Redux', 'Reflux'],
+      when: function (answers) {
+        return answers.isState
+      },
+      filter: function (val) {
+        return val.toLowerCase();
+      }
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 React-router ？',
+      name: 'isUseRouter'
+    },
+    {
+      type: 'list',
+      message: '请选择项目类型：',
+      name: 'isSingleRouter',
+      choices: ['单页面应用', '多页面应用'],
+      when: function (answers) {
+        return answers.isUseRouter
+      },
+      filter: function (val) {
+        return val === '单页面应用'
+      }
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 API mock 服务 ？',
+      name: 'isMock'
+    },
+    {
+      type: 'list',
+      message: '请选择：',
+      name: 'mockType',
+      choices: ['Koa + MockJS 模拟 API mock 服务', 'Express 模拟 API mock 服务'],
+      when: function (answers) {
+        return answers.isMock
+      },
+      filter: function (val) {
+        const isKoa = val.includes('Koa');
+        const isExpress = val.includes('Express');
+
+        return isKoa ? 'koa' : isExpress ? 'express' : '';
+      }
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 ESlint 语法规范化验证 ？',
+      name: 'isESlint'
+    },
+    {
+      type: 'confirm',
+      message: '是否使用 前端测试 ？',
+      name: 'isTest'
     }
   ];
 }
