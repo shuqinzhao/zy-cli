@@ -5,10 +5,14 @@ const { copyCatalog } = require('./file');
 
 function createSimpleProject (config) {
   if (!config.isRoot && config.name) {
-    mkdir(config.name, () => {
-      copyCatalog(config.type, config.name);
-    });
+    if (typeof config.isCover === 'undefined' || config.isCover) {
+      mkdir(config.name, () => {
+        console.log('');
+        copyCatalog(config.type, config.name);
+      });
+    }
   } else {
+    console.log('');
     copyCatalog(config.type);
   }
 }

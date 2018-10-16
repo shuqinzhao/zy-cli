@@ -50,12 +50,15 @@ function simplePrompt (userInfo, catalogs) {
       type: 'input',
       message: '作者：',
       name: 'auth',
-      default: userInfo
+      default: userInfo,
+      when: function (answers) {
+        return (typeof answers.isCover === 'undefined' || answers.isCover)
+      }
     }
   ];
 }
-/** webpackSimpleTemplate prompt list */
-function webpackSimpleTemplate (userInfo, catalogs) {
+/** webpackSimplePrompt prompt list */
+function webpackSimplePrompt (userInfo, catalogs) {
   return [
     {
       type: 'confirm',
@@ -100,5 +103,5 @@ function webpackSimpleTemplate (userInfo, catalogs) {
 module.exports = {
   templateList,
   simplePrompt,
-  webpackSimpleTemplate
+  webpackSimplePrompt
 };

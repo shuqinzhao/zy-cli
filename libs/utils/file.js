@@ -5,7 +5,15 @@ const { templateList } = require('../../config');
 const BASE_PATH = '../../templates';
 
 function write ( path, str, mode ) {
-  fs.writeFileSync(path, str);
+  fs.writeFile(path, str, function (err) {
+    if (err) {
+      throw err;
+      return;
+    }
+
+    const files = path.split('/');
+    console.log(colors.green(`${files[files.length - 1]} 下载成功 ！`));
+  });
 }
 function mkdir ( path, fn ) {
   fs.mkdir(path, function (err) {

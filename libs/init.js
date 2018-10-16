@@ -2,17 +2,17 @@
 
 const inquirer = require('inquirer');
 const program = require('commander');
+const colors = require('colors');
 const user = require('./utils/user');
 const fs = require('fs');
 const chooseTemplate = require('./utils/chooseTemplate');
-const { downloadFile } = require('./utils/download');
-const { simplePrompt, webpackSimpleTemplate } = require('../config');
+const { simplePrompt, webpackSimplePrompt } = require('../config');
 let config = {};
 
 function getCatalogs () {
   const rootPath = process.cwd();
   let catalogs = [];
-  const files = fs.readdirSync(process.cwd());
+  const files = fs.readdirSync(rootPath);
 
   files.forEach(item => {
     fs.stat(`${rootPath}/${item}`, function (err, stat) {
@@ -30,7 +30,6 @@ function getCatalogs () {
   return catalogs;
 }
 const catalogs = getCatalogs();
-
 
 program.parse(process.argv);
 const userInfo = user();
@@ -58,8 +57,13 @@ async function init () {
       config = await prompt(simplePrompt(userInfo, catalogs));
       break;
     case 'webpack-simple':
-      config = await prompt(webpackSimpleTemplate(userInfo, catalogs));
+      config = await prompt(webpackSimplePrompt(userInfo, catalogs));
       break;
+    default:
+      console.log(colors.red(`不存在该模板！
+      `));
+      console.log(colors.green(`请重新选择
+      `));
   }
   config.type = program.args[0];
 
