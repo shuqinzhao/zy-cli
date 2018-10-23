@@ -15,7 +15,21 @@ function createSimpleProject (config) {
           setTimeout(resolve, 500);
         });
         p.then(function (resolve, reject) {
-          modifyContent(`${config.name}/config.json`, config);
+          var p1 = new Promise(function (resolve, reject) {
+            modifyContent(`${config.name}/config.json`, config);
+    
+            setTimeout(resolve, 500);
+          });
+    
+          return p1;
+        }).then(function () {
+          fs.unlink(`${config.name}/config.json`, (err) => {
+            if (err) {
+              console.error(err);
+            }
+    
+            console.log(colors.green('------------- 成功移除 config.json -------------'));
+          });
         });
       });
     }
@@ -25,7 +39,21 @@ function createSimpleProject (config) {
       setTimeout(resolve, 500);
     });
     p.then(function (resolve, reject) {
-      modifyContent('config.json', config);
+      var p1 = new Promise(function (resolve, reject) {
+        modifyContent('config.json', config);
+
+        setTimeout(resolve, 500);
+      });
+
+      return p1;
+    }).then(function () {
+      fs.unlink('config.json', (err) => {
+        if (err) {
+          console.error(err);
+        }
+
+        console.log(colors.green('------------- 成功移除 config.json -------------'));
+      });
     });
   }
 }
