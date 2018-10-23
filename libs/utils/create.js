@@ -3,7 +3,6 @@
 const { mkdir } = require('./file');
 const fs = require('fs');
 const colors = require('colors');
-const path = require('path');
 const { copyCatalog, modifyContent } = require('./file');
 
 function createSimpleProject (config) {

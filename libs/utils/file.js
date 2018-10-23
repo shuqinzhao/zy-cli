@@ -24,30 +24,8 @@ async function copyTemplate ( from , to ) {
   from = path.join(__dirname, from);
   await write(to, fs.readFileSync(from, 'utf-8'));
 }
-function modifyContentBak (filePath) {
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      return console.error(err);
-    }
-    let htmlData = data.toString();
-    const isFilter = htmlData.includes('{{simple-template}}');
-
-    if (isFilter) {
-      htmlData = htmlData.replace('{{simple-template}}', 'demo');
-  
-      fs.writeFile(filePath, htmlData, function (err) {
-        if (err) {
-          console.error(err);
-        }
-        console.log(colors.green('------------- 修改成功 -------------'));
-      });
-    } else {
-      console.log(colors.red('------------- 修改失败 -------------'))
-    }
-  });
-}
 function modifyContent (configPath, config) {
-  const basePath = `${config.name ? `${config.name}/` : ''}`;
+  const basePath = config.name ? `${config.name}/` : '';
   fs.stat(`${basePath}config.json`, (err, stat) => {
     if (err) {
       console.error(err)
