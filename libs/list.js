@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const request = require('request');
 const colors = require('colors');
 const { templateList } = require('../config');
 

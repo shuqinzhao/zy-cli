@@ -49,7 +49,7 @@ function simplePrompt (userInfo, catalogs) {
     {
       type: 'input',
       message: '作者：',
-      name: 'auth',
+      name: 'author',
       default: userInfo,
       when: function (answers) {
         return (typeof answers.isCover === 'undefined' || answers.isCover)
@@ -94,7 +94,7 @@ function webpackSimplePrompt (userInfo, catalogs) {
     {
       type: 'input',
       message: '作者：',
-      name: 'auth',
+      name: 'author',
       default: userInfo,
       when: function (answers) {
         return (typeof answers.isCover === 'undefined' || answers.isCover)

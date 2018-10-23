@@ -71,9 +71,7 @@ async function init () {
 
     chooseTemplate(config);
   } else {
-    console.log('');
-    console.log(colors.red('请选择所需模板!'));
-    console.log('');
+    console.log(colors.red('\n请选择所需模板!\n'));
   }
 }
 

@@ -20,9 +20,72 @@ function mkdir ( path, fn ) {
     fn & fn();
   });
 }
-function copyTemplate ( from , to ) {
+async function copyTemplate ( from , to ) {
   from = path.join(__dirname, from);
-  write(to, fs.readFileSync(from, 'utf-8'));
+  await write(to, fs.readFileSync(from, 'utf-8'));
+}
+function modifyContentBak (filePath) {
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      return console.error(err);
+    }
+    let htmlData = data.toString();
+    const isFilter = htmlData.includes('{{simple-template}}');
+
+    if (isFilter) {
+      htmlData = htmlData.replace('{{simple-template}}', 'demo');
+  
+      fs.writeFile(filePath, htmlData, function (err) {
+        if (err) {
+          console.error(err);
+        }
+        console.log(colors.green('------------- 修改成功 -------------'));
+      });
+    } else {
+      console.log(colors.red('------------- 修改失败 -------------'))
+    }
+  });
+}
+function modifyContent (configPath, config) {
+  const basePath = `${config.name ? `${config.name}/` : ''}`;
+  fs.stat(`${basePath}config.json`, (err, stat) => {
+    if (err) {
+      console.error(err)
+    }
+    if (stat.isFile()) {
+      fs.readFile(configPath, (error, data) => {
+        if (error) {
+          console.error(error)
+        }
+        const configJson = JSON.parse(data.toString());
+    
+        Object.keys(configJson).forEach(item => {
+          fs.readFile(`${basePath}${item}`, (err, data) => {
+            if (err) {
+              console.error(err)
+            }
+            let htmlData = data.toString();
+    
+            Object.keys(configJson[item]).forEach(keyItem => {
+              const isFilter = htmlData.includes(`{{${keyItem}}}`);
+    
+              if (isFilter) {
+                htmlData = htmlData.replace(`{{${keyItem}}}`, config[keyItem] ? config[keyItem] : 'demo');
+              }
+            });
+    
+            fs.writeFile(`${basePath}${item}`, htmlData, function (err) {
+              if (err) {
+                console.error(err);
+              }
+    
+              console.log(colors.green('------------- 项目新建成功！ -------------'));
+            });
+          });
+        });
+      });
+    }
+  });
 }
 
 function copyCatalog (mkdirPath, projectName) {
@@ -77,6 +140,7 @@ function copyCatalog (mkdirPath, projectName) {
 
 module.exports = {
   BASE_PATH,
+  modifyContent,
   copyCatalog,
   mkdir
 }
