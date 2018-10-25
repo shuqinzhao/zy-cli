@@ -45,10 +45,10 @@ function modifyContent (configPath, config) {
             let htmlData = data.toString();
     
             Object.keys(configJson[item]).forEach(keyItem => {
-              const isFilter = htmlData.includes(`{{${keyItem}}}`);
+              const isFilter = htmlData.includes(`~~${keyItem}~~`);
     
               if (isFilter) {
-                htmlData = htmlData.replace(`{{${keyItem}}}`, config[keyItem] ? config[keyItem] : 'demo');
+                htmlData = htmlData.replace(`~~${keyItem}~~`, config[keyItem] ? config[keyItem] : 'demo');
               }
             });
     
